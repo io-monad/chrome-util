@@ -1,6 +1,24 @@
 # @io-monad/chrome-util
 
+[![wercker status](https://app.wercker.com/status/ffe012c41ac487550392789849d98a38/s/master "wercker status")](https://app.wercker.com/project/bykey/ffe012c41ac487550392789849d98a38) [![](https://doc.esdoc.org/github.com/io-monad/chrome-util/badge.svg)](https://doc.esdoc.org/github.com/io-monad/chrome-util/)
+
 Collection of utilities for building Chrome extension
+
+## API
+
+See [API ESDoc](https://doc.esdoc.org/github.com/io-monad/chrome-util/)
+
+### Usage
+
+```
+$ npm install --save @io-monad/chrome-util
+```
+
+```js
+import { getVersion } from "@io-monad/chrome-util";
+
+console.log(getVersion());
+```
 
 ## Build
 
