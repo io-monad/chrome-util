@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "author": "IRIDE Monad <iride.monad@gmail.com>",
   "repository": "io-monad/chrome-util",
-  "homepage": "https://github.com/io-monad/chrome-util#readme",
+  "homepage": "https://github.com/io-monad/chrome-util",
   "bugs": {
     "url": "https://github.com/io-monad/chrome-util/issues"
   },
@@ -24,6 +24,7 @@
     "src"
   ],
   "directories": {
+    "doc": "docs",
     "test": "test"
   },
   "devDependencies": {
