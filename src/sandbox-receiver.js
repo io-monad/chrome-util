@@ -36,28 +36,21 @@ export default class SandboxReceiver {
     }
 
     const requestId = message.requestId;
-    const type = message.type.toUpperCase();
+    const respond = (response) => {
+      event.source.postMessage({ requestId, response }, event.origin);
+    };
 
+    const type = message.type.toUpperCase();
     const handler = this._handlers[type];
     if (handler) {
-      let isResponded = false;
-      const sendResponse = (response) => {
-        if (isResponded) throw new Error("sendResponse is called twice");
-        isResponded = true;
-        event.source.postMessage({ requestId, response }, event.origin);
-      };
-
-      const ret = handler.call(this._thisObj, message, sendResponse);
+      const ret = handler.call(this._thisObj, message);
       if (isPromise(ret)) {
-        // Not chainning then and catch not to call sendResponse twice
         ret.then(
-          response => sendResponse(response),
-          error => sendResponse({ error: error.message || error })
+          response => { respond(response); },
+          error => { respond({ error: error.message || error }); }
         );
-      } else if (ret !== true) {
-        // Returning non-`true` means sendResponse is called synchronously
-        // In this case we should respond automatically with empty response
-        if (!isResponded) sendResponse(null);
+      } else {
+        respond(ret);
       }
     }
   }
@@ -68,13 +61,9 @@ export default class SandboxReceiver {
  *
  * @typedef {Function} SandboxReceiver~ReceiverFunction
  * @param {Object} message - Received message.
- * @param {function (response:any):void} sendResponse
- *     Callback function to send response.
- * @return {boolean|Promise}
- *     Return `true` to indicate that sendResponse is called asynchronously.
- *     Otherwise sendResponse is called automatically.
+ * @return {Promise|any}
+ *     Any value to be returned to the sender as response.
  *
- *     You can also return `Promise`-like object, and in that case it will
- *     automatically calls `sendResponse` with the resolved value,
- *     or the rejected value with `sendResponse({ error: rejectedValue })`.
+ *     If it is a Promise, its resolved value is returned to the sender,
+ *     or its rejected value is returned as error response.
  */

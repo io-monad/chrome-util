@@ -9,12 +9,13 @@ class E2ETestSandboxReceiver {
       FAIL: this.handleFail,
     }, this);
   }
-  handleHello(message, sendResponse) {
-    sendResponse(`Hello, ${message.name}!`);
+  handleHello(message) {
+    return `Hello, ${message.name}!`;
   }
-  handleWait(message, sendResponse) {
-    setTimeout(() => { sendResponse({ waited: true }); }, message.wait);
-    return true;
+  handleWait(message) {
+    return new Promise(resolve => {
+      setTimeout(() => { resolve({ waited: true }); }, message.wait);
+    });
   }
   handleEcho(message) {
     return Promise.resolve(message);

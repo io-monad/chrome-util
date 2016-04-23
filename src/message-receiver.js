@@ -48,21 +48,23 @@ export default class MessageReceiver {
       return false;
     }
 
-    let ret = false;
+    let isAsync = false;
     const type = message.type.toUpperCase();
     const handler = this._handlers[type];
     if (handler) {
-      ret = handler.call(this._thisObj, message, sender, sendResponse);
+      const ret = handler.call(this._thisObj, message, sender);
       if (isPromise(ret)) {
-        // Not chainning then and catch not to call sendResponse twice
         ret.then(
           response => sendResponse(response),
           error => sendResponse({ error: error.message || error })
         );
-        ret = true;  // Mark it as async response
+        isAsync = true;
+      } else {
+        sendResponse(ret);
+        isAsync = false;
       }
     }
-    return ret;
+    return isAsync;
   }
 }
 
@@ -73,14 +75,11 @@ export default class MessageReceiver {
  * @param {Object} message - Received message.
  * @param {Object} sender - Sender information.
  *     See Chrome API documentation for details.
- * @param {function (response:any):void} sendResponse
- *     Callback function to send response.
- * @return {boolean|Promise}
- *     Return `true` to indicate that sendResponse is called asynchronously.
+ * @return {any|Promise}
+ *     Any value to be returned to the sender as response.
  *
- *     You can also return `Promise`-like object, and in that case it will
- *     automatically calls `sendResponse` with the resolved value,
- *     or the rejected value with `sendResponse({ error: rejectedValue })`.
+ *     If it is a Promise, its resolved value is returned to the sender,
+ *     or its rejected value is returned as error response.
  *
  * @see https://developer.chrome.com/extensions/runtime#event-onMessage
  * @see https://developer.chrome.com/extensions/runtime#event-onMessageExternal
