@@ -22,7 +22,7 @@ describe("openOptionsPage", () => {
 
     it("opens a new tab of options page", () => {
       chrome.extension.getURL.returns("/options");
-      chrome.tabs.query.callsArgWith(1, []);
+      chrome.tabs.query.yields([]);
 
       openOptionsPage();
 
@@ -38,7 +38,7 @@ describe("openOptionsPage", () => {
 
     it("activates options tab if exist", () => {
       chrome.extension.getURL.returns("/options");
-      chrome.tabs.query.callsArgWith(1, [{ id: 123 }]);
+      chrome.tabs.query.yields([{ id: 123 }]);
 
       openOptionsPage();
 

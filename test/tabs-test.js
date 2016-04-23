@@ -15,7 +15,7 @@ describe("Tabs", () => {
   describe(".getActiveTab", () => {
     it("returns Promise of active tab", (done) => {
       const dummyTab = {};
-      chrome.tabs.query.callsArgWithAsync(1, [dummyTab]);
+      chrome.tabs.query.yieldsAsync([dummyTab]);
 
       tabs.getActiveTab().then(tab => {
         assert(tab === dummyTab);
@@ -25,7 +25,7 @@ describe("Tabs", () => {
     });
 
     it("returns Promise of null when no active tab", (done) => {
-      chrome.tabs.query.callsArgWithAsync(1, []);
+      chrome.tabs.query.yieldsAsync([]);
 
       tabs.getActiveTab().then(tab => {
         assert(tab === null);
@@ -39,7 +39,7 @@ describe("Tabs", () => {
   describe(".withActiveTab", () => {
     it("calls given function with active tab", (done) => {
       const dummyTab = {};
-      chrome.tabs.query.callsArgWithAsync(1, [dummyTab]);
+      chrome.tabs.query.yieldsAsync([dummyTab]);
 
       tabs.withActiveTab(tab => {
         assert(tab === dummyTab);
@@ -49,7 +49,7 @@ describe("Tabs", () => {
     });
 
     it("never calls given function when no active tab", () => {
-      chrome.tabs.query.callsArgWithAsync(1, []);
+      chrome.tabs.query.yieldsAsync([]);
 
       tabs.withActiveTab(() => { assert(false); });
       assertActiveTabQuery();
@@ -60,7 +60,7 @@ describe("Tabs", () => {
   describe(".getTab", () => {
     it("returns Promise of tab of given ID", (done) => {
       const dummyTab = {};
-      chrome.tabs.get.callsArgWithAsync(1, dummyTab);
+      chrome.tabs.get.yieldsAsync(dummyTab);
 
       tabs.getTab(123).then(tab => {
         assert(tab === dummyTab);
@@ -71,7 +71,7 @@ describe("Tabs", () => {
     });
 
     it("returns Promise of null when no tab of given ID", (done) => {
-      chrome.tabs.get.callsArgWithAsync(1, null);
+      chrome.tabs.get.yieldsAsync(null);
 
       tabs.getTab(123).then(tab => {
         assert(tab === null);
@@ -86,7 +86,7 @@ describe("Tabs", () => {
   describe(".withTab", () => {
     it("calls given function with tab of given ID", (done) => {
       const dummyTab = {};
-      chrome.tabs.get.callsArgWithAsync(1, dummyTab);
+      chrome.tabs.get.yieldsAsync(dummyTab);
 
       tabs.withTab(123, tab => {
         assert(tab === dummyTab);
@@ -97,7 +97,7 @@ describe("Tabs", () => {
     });
 
     it("never calls given function when no tab of given ID", () => {
-      chrome.tabs.get.callsArgWithAsync(1, null);
+      chrome.tabs.get.yieldsAsync(null);
 
       tabs.withTab(123, () => { assert(false); });
       assert(chrome.tabs.get.calledOnce === true);

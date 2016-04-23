@@ -26,7 +26,7 @@ describe("Alarm", () => {
   /** @test {Alarm#stop} */
   describe("#stop", () => {
     it("calls chrome.alarms.clear with Promise", (done) => {
-      chrome.alarms.clear.callsArgWithAsync(1, true);
+      chrome.alarms.clear.yields(true);
       alarm.stop().then(ret => {
         assert(ret === true);
         assert(chrome.alarms.clear.calledOnce === true);
