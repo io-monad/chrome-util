@@ -11,9 +11,9 @@
  */
 export default function promisify(fn) {
   return new Promise((resolve, reject) => {
-    fn.call(null, (response) => {
-      if (chrome.runtime.lastError) {
-        reject(chrome.runtime.lastError);
+    fn.call(null, (response, err) => {
+      if (chrome.runtime.lastError || err) {
+        reject(chrome.runtime.lastError || err);
       } else {
         resolve(response);
       }

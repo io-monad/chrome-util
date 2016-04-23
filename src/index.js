@@ -15,6 +15,10 @@ export default class ChromeUtil {
   static get getVersion() { return require("./get-version"); }
   /** @type {Class.<MessageReceiver>} */
   static get MessageReceiver() { return require("./message-receiver"); }
+  /** @type {Class.<MessageSender>} */
+  static get MessageSender() { return require("./message-sender"); }
+  /** @type {Class.<MessageTabSender>} */
+  static get MessageTabSender() { return require("./message-tab-sender"); }
   /** @type {openOptionsPage} */
   static get openOptionsPage() { return require("./open-options-page"); }
   /** @type {openStorePage} */

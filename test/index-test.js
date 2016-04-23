@@ -24,6 +24,20 @@ describe("ChromeUtil", () => {
     });
   });
 
+  /** @test {ChromeUtil.MessageSender} **/
+  describe(".MessageSender", () => {
+    it("returns loaded module", () => {
+      assert(typeof ChromeUtil.MessageSender === "function");
+    });
+  });
+
+  /** @test {ChromeUtil.MessageTabSender} **/
+  describe(".MessageTabSender", () => {
+    it("returns loaded module", () => {
+      assert(typeof ChromeUtil.MessageTabSender === "function");
+    });
+  });
+
   /** @test {ChromeUtil.openOptionsPage} **/
   describe(".openOptionsPage", () => {
     it("returns loaded module", () => {

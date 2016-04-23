@@ -14,7 +14,7 @@ describe("promisify", () => {
     });
   });
 
-  it("returns rejected Promise for chrome.runtime.lastError", (done) => {
+  it("returns rejected Promise for chrome.runtime.lastError", () => {
     const error = { message: "Test error" };
     const asyncFunction = (callback) => {
       setImmediate(() => {
@@ -23,9 +23,20 @@ describe("promisify", () => {
       });
     };
 
-    promisify(cb => asyncFunction(cb)).catch(ret => {
-      assert(ret === error);
-      done();
+    const promise = promisify(cb => asyncFunction(cb));
+    return assert.rejected(promise, rejected => {
+      assert(rejected === error);
+    });
+  });
+
+  it("returns rejected Promise when error is passed", () => {
+    const asyncFunction = (callback) => {
+      setImmediate(() => { callback(null, "NG"); });
+    };
+
+    const promise = promisify(cb => asyncFunction(cb));
+    return assert.rejected(promise, rejected => {
+      assert(rejected === "NG");
     });
   });
 });
