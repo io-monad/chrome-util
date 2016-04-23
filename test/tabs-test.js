@@ -13,24 +13,22 @@ describe("Tabs", () => {
 
   /** @test {Tabs.getActiveTab} */
   describe(".getActiveTab", () => {
-    it("returns Promise of active tab", (done) => {
+    it("returns Promise of active tab", () => {
       const dummyTab = {};
       chrome.tabs.query.yieldsAsync([dummyTab]);
 
-      tabs.getActiveTab().then(tab => {
+      return tabs.getActiveTab().then(tab => {
         assert(tab === dummyTab);
         assertActiveTabQuery();
-        done();
       });
     });
 
-    it("returns Promise of null when no active tab", (done) => {
+    it("returns Promise of null when no active tab", () => {
       chrome.tabs.query.yieldsAsync([]);
 
-      tabs.getActiveTab().then(tab => {
+      return tabs.getActiveTab().then(tab => {
         assert(tab === null);
         assertActiveTabQuery();
-        done();
       });
     });
   });
@@ -58,26 +56,24 @@ describe("Tabs", () => {
 
   /** @test {Tabs.getTab} */
   describe(".getTab", () => {
-    it("returns Promise of tab of given ID", (done) => {
+    it("returns Promise of tab of given ID", () => {
       const dummyTab = {};
       chrome.tabs.get.yieldsAsync(dummyTab);
 
-      tabs.getTab(123).then(tab => {
+      return tabs.getTab(123).then(tab => {
         assert(tab === dummyTab);
         assert(chrome.tabs.get.calledOnce === true);
         assert(chrome.tabs.get.args[0][0] === 123);
-        done();
       });
     });
 
-    it("returns Promise of null when no tab of given ID", (done) => {
+    it("returns Promise of null when no tab of given ID", () => {
       chrome.tabs.get.yieldsAsync(null);
 
-      tabs.getTab(123).then(tab => {
+      return tabs.getTab(123).then(tab => {
         assert(tab === null);
         assert(chrome.tabs.get.calledOnce === true);
         assert(chrome.tabs.get.args[0][0] === 123);
-        done();
       });
     });
   });

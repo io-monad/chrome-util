@@ -3,14 +3,13 @@ import promisify from "../src/promisify";
 
 /** @test {promisify} */
 describe("promisify", () => {
-  it("returns Promise version of async function", (done) => {
+  it("returns Promise version of async function", () => {
     const asyncFunction = (callback) => {
       setImmediate(() => { callback("OK"); });
     };
 
-    promisify(cb => asyncFunction(cb)).then(ret => {
+    return promisify(cb => asyncFunction(cb)).then(ret => {
       assert(ret === "OK");
-      done();
     });
   });
 

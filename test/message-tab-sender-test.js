@@ -23,12 +23,12 @@ describe("MessageTabSender", () => {
   });
 
   describe("#sendXXX", () => {
-    it("sends message via chrome.tabs.sendMessage", (done) => {
+    it("sends message via chrome.tabs.sendMessage", () => {
       const response = {};
       chrome.tabs.sendMessage.yields(response);
 
       const sender = new MessageTabSender(["FOO"]);
-      sender.sendFoo(123, { a: 1, b: "x" }).then(resolved => {
+      return sender.sendFoo(123, { a: 1, b: "x" }).then(resolved => {
         assert(resolved === response);
 
         assert(chrome.tabs.sendMessage.calledOnce === true);
@@ -37,8 +37,6 @@ describe("MessageTabSender", () => {
           chrome.tabs.sendMessage.args[0][1],
           { type: "FOO", a: 1, b: "x" }
         );
-
-        done();
       });
     });
 

@@ -23,12 +23,12 @@ describe("MessageSender", () => {
   });
 
   describe("#sendXXX", () => {
-    it("sends message via chrome.runtime.sendMessage", (done) => {
+    it("sends message via chrome.runtime.sendMessage", () => {
       const response = {};
       chrome.runtime.sendMessage.yields(response);
 
       const sender = new MessageSender(["FOO"]);
-      sender.sendFoo({ a: 1, b: "x" }).then(resolved => {
+      return sender.sendFoo({ a: 1, b: "x" }).then(resolved => {
         assert(resolved === response);
 
         assert(chrome.runtime.sendMessage.calledOnce === true);
@@ -36,8 +36,6 @@ describe("MessageSender", () => {
           chrome.runtime.sendMessage.args[0][0],
           { type: "FOO", a: 1, b: "x" }
         );
-
-        done();
       });
     });
 
