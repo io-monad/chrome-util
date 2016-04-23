@@ -1,4 +1,4 @@
-import camelCase from "lodash/camelCase";
+import _ from "lodash";
 
 /**
  * Get a translation of message.
@@ -12,7 +12,7 @@ import camelCase from "lodash/camelCase";
  */
 export default function translateMessage(message) {
   return String(message || "").replace(/__MSG_(\w+)__/g, (m, key) => {
-    key = camelCase(key);
+    key = _.camelCase(key);
     const translated = chrome.i18n.getMessage(key);
 
     if (translated === "") {

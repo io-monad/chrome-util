@@ -7,6 +7,11 @@
     "add-module-exports"
   ],
   "env": {
+    "production": {
+      "plugins": [
+        "lodash"
+      ]
+    },
     "development": {
       "presets": [
         "power-assert"

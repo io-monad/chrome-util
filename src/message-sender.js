@@ -1,4 +1,4 @@
-import extend from "lodash/extend";
+import _ from "lodash";
 import promisify from "./promisify";
 import normalizeMessageTypes from "./helpers/normalize-message-types";
 import defineSendMethods from "./helpers/define-send-methods";
@@ -26,7 +26,7 @@ export default class MessageSender {
 
   _send(type, message) {
     return promisify(callback => {
-      message = extend({ type }, message);
+      message = _.extend({ type }, message);
       chrome.runtime.sendMessage(message, response => {
         if (response && response.error) {
           callback(null, response.error);

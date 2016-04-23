@@ -1,6 +1,4 @@
-import isArray from "lodash/isArray";
-import keys from "lodash/keys";
-import transform from "lodash/transform";
+import _ from "lodash";
 
 /**
  * Normalize message types into mappings.
@@ -11,10 +9,10 @@ import transform from "lodash/transform";
  * @ignore
  */
 export default function normalizeMessageTypes(messageTypes) {
-  if (!isArray(messageTypes)) {
-    messageTypes = keys(messageTypes);
+  if (!_.isArray(messageTypes)) {
+    messageTypes = _.keys(messageTypes);
   }
-  return transform(messageTypes, (acc, type) => {
+  return _.transform(messageTypes, (acc, type) => {
     type = type.toUpperCase();
     acc[type] = type;
   }, {});

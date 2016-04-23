@@ -1,4 +1,4 @@
-import camelCase from "lodash/camelCase";
+import _ from "lodash";
 
 /**
  * Define send methods to message sender.
@@ -10,7 +10,7 @@ import camelCase from "lodash/camelCase";
  */
 export default function defineSendMethods(messageSender, messageTypes, method) {
   messageTypes.forEach(type => {
-    messageSender[camelCase(`send-${type}`)] = (...args) => {
+    messageSender[_.camelCase(`send-${type}`)] = (...args) => {
       return method.call(messageSender, type, ...args);
     };
   });

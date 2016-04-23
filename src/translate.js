@@ -1,4 +1,4 @@
-import camelCase from "lodash/camelCase";
+import _ from "lodash";
 
 /**
  * Get a translation of given key.
@@ -20,7 +20,7 @@ export default function translate(key, substitutions, fallback) {
     substitutions = undefined;
   }
 
-  key = camelCase(key);
+  key = _.camelCase(key);
   const translated = chrome.i18n.getMessage(key, substitutions);
   if (translated === "" && typeof fallback === "undefined") {
     console.warn(`No translation for "${key}"`);
