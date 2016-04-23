@@ -16,8 +16,8 @@
     "lint": "eslint src test",
     "prepublish": "npm run build",
     "test": "npm run lint && mocha",
-    "testw": "mocha --watch",
-    "testwg": "mocha --watch --growl"
+    "testw": "mocha --watch --reporter nyan",
+    "testwg": "mocha --watch --growl --reporter nyan"
   },
   "files": [
     "lib",
