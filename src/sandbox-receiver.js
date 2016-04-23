@@ -50,8 +50,10 @@ export default class SandboxReceiver {
       const ret = handler.call(this._thisObj, message, sendResponse);
       if (isPromise(ret)) {
         // Not chainning then and catch not to call sendResponse twice
-        ret.then(response => sendResponse(response));
-        ret.catch(error => sendResponse({ error: error.message || error }));
+        ret.then(
+          response => sendResponse(response),
+          error => sendResponse({ error: error.message || error })
+        );
       } else if (ret !== true) {
         // Returning non-`true` means sendResponse is called synchronously
         // In this case we should respond automatically with empty response

@@ -55,8 +55,10 @@ export default class MessageReceiver {
       ret = handler.call(this._thisObj, message, sender, sendResponse);
       if (isPromise(ret)) {
         // Not chainning then and catch not to call sendResponse twice
-        ret.then(response => sendResponse(response));
-        ret.catch(error => sendResponse({ error: error.message || error }));
+        ret.then(
+          response => sendResponse(response),
+          error => sendResponse({ error: error.message || error })
+        );
         ret = true;  // Mark it as async response
       }
     }
