@@ -25,6 +25,10 @@ export default class ChromeUtil {
   static get openStorePage() { return require("./open-store-page"); }
   /** @type {promisify} */
   static get promisify() { return require("./promisify"); }
+  /** @type {Class.<SandboxReceiver>} */
+  static get SandboxReceiver() { return require("./sandbox-receiver"); }
+  /** @type {Class.<SandboxSender>} */
+  static get SandboxSender() { return require("./sandbox-sender"); }
   /** @type {Class.<Storage>} */
   static get storage() { return require("./storage"); }
   /** @type {Class.<Tabs>} */

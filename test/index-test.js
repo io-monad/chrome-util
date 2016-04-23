@@ -59,6 +59,20 @@ describe("ChromeUtil", () => {
     });
   });
 
+  /** @test {ChromeUtil.SandboxReceiver} **/
+  describe(".SandboxReceiver", () => {
+    it("returns loaded module", () => {
+      assert(typeof ChromeUtil.SandboxReceiver === "function");
+    });
+  });
+
+  /** @test {ChromeUtil.SandboxSender} **/
+  describe(".SandboxSender", () => {
+    it("returns loaded module", () => {
+      assert(typeof ChromeUtil.SandboxSender === "function");
+    });
+  });
+
   /** @test {ChromeUtil.storage} **/
   describe(".storage", () => {
     it("returns loaded module", () => {

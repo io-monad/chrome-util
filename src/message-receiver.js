@@ -1,10 +1,11 @@
 import isPromise from "is-promise";
+import normalizeMessageHandlers from "./helpers/normalize-message-handlers";
 
 /**
  * Message receiver for Chrome messaging spec.
  *
  * @example
- *     const receiver = new ChromeMessageReceiver({
+ *     const receiver = new MessageReceiver({
  *       FOO: this.handleFoo,
  *       BAR: this.handleBar,
  *     }, this);
@@ -17,7 +18,7 @@ export default class MessageReceiver {
    * @param {Object} [thisObj] `this` context for calling handlers.
    */
   constructor(handlers, thisObj) {
-    this._handlers = this._buildHandlers(handlers);
+    this._handlers = normalizeMessageHandlers(handlers);
     this._thisObj = thisObj || null;
 
     /**
@@ -28,18 +29,6 @@ export default class MessageReceiver {
      * @type {Function}
      */
     this.listener = this.receive.bind(this);
-  }
-
-  _buildHandlers(handlers) {
-    const builtHandlers = {};
-    Object.keys(handlers).forEach(key => {
-      const method = handlers[key];
-      if (typeof method !== "function") {
-        throw new Error(`Non-Function method for ${key}`);
-      }
-      builtHandlers[key.toUpperCase()] = method;
-    });
-    return builtHandlers;
   }
 
   /**
@@ -55,7 +44,7 @@ export default class MessageReceiver {
    */
   receive(message, sender, sendResponse) {
     if (!message || typeof message.type !== "string") {
-      console.warn("Unknown message format received");
+      console.warn("Unknown message format received", message);
       return false;
     }
 
@@ -64,7 +53,6 @@ export default class MessageReceiver {
     const handler = this._handlers[type];
     if (handler) {
       ret = handler.call(this._thisObj, message, sender, sendResponse);
-
       if (isPromise(ret)) {
         // Not chainning then and catch not to call sendResponse twice
         ret.then(response => sendResponse(response));
