@@ -4,34 +4,34 @@ import SandboxSender from "../src/sandbox-sender";
 
 /** @test {SandboxSender} */
 describe("SandboxSender", () => {
-  let responseHandler;
-  let iframe;
-  let sinonSandbox;
+  if (typeof window === "undefined") {
+    require("mocha-jsdom")();
+  }
 
-  beforeEach(() => {
-    global.window = {
-      addEventListener: (type, handler) => {
-        assert(type === "message" && _.isFunction(handler));
-        responseHandler = handler;
-      },
-    };
-    iframe = { contentWindow: { postMessage: () => {} } };
+  let sinonSandbox;
+  let iframe;
+
+  before(() => {
     sinonSandbox = sinon.sandbox.create();
   });
 
+  beforeEach(() => {
+    iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+  });
+
   afterEach(() => {
-    delete global.window;
     sinonSandbox.restore();
+    document.body.removeChild(iframe);
   });
 
   function setSandboxResponse(response) {
-    sinon.stub(iframe.contentWindow, "postMessage", (message, origin) => {
-      setImmediate(() => {
-        responseHandler({
-          data: { requestId: message.requestId, response },
-          origin,
-        });
-      });
+    sinonSandbox.stub(iframe.contentWindow, "postMessage", (received, origin) => {
+      const message = {
+        requestId: received.requestId,
+        response,
+      };
+      window.postMessage(message, origin);
     });
   }
 
@@ -61,9 +61,9 @@ describe("SandboxSender", () => {
 
       const sender = new SandboxSender(iframe, ["FOO"]);
       return sender.sendFoo({ a: 1, b: "x" }).then(resolved => {
-        assert.deepStrictEqual(resolved, response);
+        assert.deepEqual(resolved, response);
         assert(iframe.contentWindow.postMessage.calledOnce === true);
-        assert.deepStrictEqual(
+        assert.deepEqual(
           iframe.contentWindow.postMessage.args[0],
           [{ type: "FOO", requestId: 1, a: 1, b: "x" }, "*"]
         );

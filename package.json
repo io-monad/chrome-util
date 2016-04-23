@@ -13,11 +13,15 @@
   "scripts": {
     "build": "BABEL_ENV=production babel src -d lib --source-maps",
     "watch": "babel src -d lib --watch --source-maps",
-    "lint": "eslint src test",
+    "lint": "eslint src test test-e2e",
     "prepublish": "npm run build",
-    "test": "npm run lint && mocha",
-    "testw": "mocha --watch --reporter nyan",
-    "testwg": "mocha --watch --growl --reporter nyan"
+    "test": "npm run lint && npm run mocha && npm run karmap",
+    "mocha": "mocha",
+    "mochaw": "mocha --watch --reporter nyan",
+    "mochawg": "mocha --watch --growl --reporter nyan",
+    "karma": "karma start",
+    "karmap": "karma start --browsers PhantomJS",
+    "karmaw": "karma start --no-single-run"
   },
   "files": [
     "lib",
@@ -29,6 +33,7 @@
   },
   "devDependencies": {
     "babel-cli": "^6.7.7",
+    "babel-loader": "^6.2.4",
     "babel-plugin-add-module-exports": "^0.1.2",
     "babel-plugin-lodash": "^2.3.0",
     "babel-plugin-transform-runtime": "^6.7.5",
@@ -38,10 +43,20 @@
     "eslint": "^2.8.0",
     "eslint-config-airbnb-base": "^1.0.3",
     "eslint-plugin-import": "^1.5.0",
+    "jsdom": "^8.4.0",
+    "json-loader": "^0.5.4",
+    "karma": "^0.13.22",
+    "karma-chrome-launcher": "^0.2.3",
+    "karma-mocha": "^0.2.2",
+    "karma-phantomjs-launcher": "^1.0.0",
+    "karma-webpack": "^1.7.0",
     "mocha": "^2.4.5",
+    "mocha-jsdom": "^1.1.0",
+    "phantomjs-prebuilt": "^2.1.7",
     "power-assert": "^1.3.1",
     "sinon": "^1.17.3",
-    "sinon-chrome": "^1.1.2"
+    "sinon-chrome": "^1.1.2",
+    "webpack": "^1.13.0"
   },
   "dependencies": {
     "babel-runtime": "^6.6.1",

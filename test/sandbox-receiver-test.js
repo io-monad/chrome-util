@@ -33,21 +33,24 @@ describe("SandboxReceiver", () => {
     }
   }
 
+  if (typeof window === "undefined") {
+    require("mocha-jsdom")();
+  }
+
+  let stubAddEventListener;
   let receiverHandler;
   let messenger;
 
   beforeEach(() => {
-    global.window = {
-      addEventListener: (type, handler) => {
-        assert(type === "message" && _.isFunction(handler));
-        receiverHandler = handler;
-      },
-    };
+    stubAddEventListener = sinon.stub(window, "addEventListener", (type, handler) => {
+      assert(type === "message" && _.isFunction(handler));
+      receiverHandler = handler;
+    });
     messenger = new TestSandboxMessenger();
   });
 
   afterEach(() => {
-    delete global.window;
+    stubAddEventListener.restore();
   });
 
   function receiveMessageSync(message) {
@@ -74,7 +77,7 @@ describe("SandboxReceiver", () => {
     const message = { type: "SYNC", requestId: 1 };
 
     const response = receiveMessageSync(message);
-    assert.deepStrictEqual(response, { requestId: 1, response: "OK" });
+    assert.deepEqual(response, { requestId: 1, response: "OK" });
 
     assert(messenger.spySync.calledOnce);
     assert(messenger.spySync.thisValues[0] === messenger);
@@ -85,7 +88,7 @@ describe("SandboxReceiver", () => {
     const message = { type: "ASYNC", requestId: 1 };
 
     return receiveMessage(message).then(response => {
-      assert.deepStrictEqual(response, { requestId: 1, response: "OK" });
+      assert.deepEqual(response, { requestId: 1, response: "OK" });
 
       assert(messenger.spyAsync.calledOnce);
       assert(messenger.spyAsync.thisValues[0] === messenger);
@@ -97,7 +100,7 @@ describe("SandboxReceiver", () => {
     const message = { type: "PROMISE", requestId: 1 };
 
     return receiveMessage(message).then(response => {
-      assert.deepStrictEqual(response, { requestId: 1, response: "OK" });
+      assert.deepEqual(response, { requestId: 1, response: "OK" });
 
       assert(messenger.spyPromise.calledOnce);
       assert(messenger.spyPromise.thisValues[0] === messenger);
@@ -109,7 +112,7 @@ describe("SandboxReceiver", () => {
     const message = { type: "REJECTED", requestId: 1 };
 
     return receiveMessage(message).then(response => {
-      assert.deepStrictEqual(response, {
+      assert.deepEqual(response, {
         requestId: 1,
         response: { error: "NG" },
       });
@@ -124,7 +127,7 @@ describe("SandboxReceiver", () => {
     const message = { type: "NO_RESPONSE", requestId: 1 };
 
     const response = receiveMessageSync(message);
-    assert.deepStrictEqual(response, { requestId: 1, response: null });
+    assert.deepEqual(response, { requestId: 1, response: null });
 
     assert(messenger.spyNoResponse.calledOnce);
     assert(messenger.spyNoResponse.thisValues[0] === messenger);
