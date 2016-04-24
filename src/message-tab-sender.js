@@ -1,7 +1,7 @@
 import _ from "lodash";
 import promisify from "./promisify";
 import normalizeMessageTypes from "./helpers/normalize-message-types";
-import defineSendMethods from "./helpers/define-send-methods";
+import tabs from "./tabs";
 
 /**
  * Message sender using chrome.tabs.sendMessage
@@ -12,6 +12,9 @@ import defineSendMethods from "./helpers/define-send-methods";
  *
  *     sender.sendFoo(tabId);
  *     sender.sendBar(tabId, { abc: 1, def: "x" }).then(response => { ... });
+ *
+ *     sender.sendFooToActiveTab();
+ *     sender.sendBarToActiveTab({ abc:1, def: "x" }).then(response => { ... });
  */
 export default class MessageTabSender {
   /**
@@ -21,7 +24,18 @@ export default class MessageTabSender {
   constructor(messageTypes) {
     this._messageTypeMap = normalizeMessageTypes(messageTypes);
     this._messageTypes = Object.keys(this._messageTypeMap);
-    defineSendMethods(this, this._messageTypes, this._send);
+    this._defineSendMethods();
+  }
+
+  _defineSendMethods() {
+    this._messageTypes.forEach(type => {
+      this[_.camelCase(`send-${type}`)] = (tabId, message) => {
+        return this._send(type, tabId, message);
+      };
+      this[_.camelCase(`send-${type}-ToActiveTab`)] = (message) => {
+        return this._sendToActiveTab(type, message);
+      };
+    });
   }
 
   _send(type, tabId, message) {
@@ -34,6 +48,13 @@ export default class MessageTabSender {
           callback(response);
         }
       });
+    });
+  }
+
+  _sendToActiveTab(type, message) {
+    return tabs.getActiveTab().then(tab => {
+      if (!tab) return Promise.reject("No active tab");
+      return this._send(type, tab.id, message);
     });
   }
 }

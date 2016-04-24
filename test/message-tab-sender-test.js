@@ -61,4 +61,56 @@ describe("MessageTabSender", () => {
       });
     });
   });
+
+  describe("#sendXXXToActiveTab", () => {
+    it("sends message to active tab via chrome.tabs.sendMessage", () => {
+      const response = {};
+      chrome.tabs.query.yields([{ id: 123 }]);
+      chrome.tabs.sendMessage.yields(response);
+
+      const sender = new MessageTabSender(["FOO"]);
+      return sender.sendFooToActiveTab({ a: 1, b: "x" }).then(resolved => {
+        assert(resolved === response);
+
+        assert(chrome.tabs.sendMessage.calledOnce === true);
+        assert(chrome.tabs.sendMessage.args[0][0] === 123);
+        assert.deepEqual(
+          chrome.tabs.sendMessage.args[0][1],
+          { type: "FOO", a: 1, b: "x" }
+        );
+      });
+    });
+
+    it("rejects Promise when there is no active tab", () => {
+      chrome.tabs.query.yields([]);
+
+      const sender = new MessageTabSender(["FOO"]);
+      return assert.rejected(sender.sendFooToActiveTab(), rejected => {
+        assert(rejected === "No active tab");
+      });
+    });
+
+    it("rejects Promise when lastError is set", () => {
+      const error = { message: "NG" };
+      chrome.runtime.lastError = error;
+      chrome.tabs.query.yields([{ id: 123 }]);
+      chrome.tabs.sendMessage.yields();
+
+      const sender = new MessageTabSender(["FOO"]);
+      return assert.rejected(sender.sendFooToActiveTab(), rejected => {
+        assert(rejected === error);
+      });
+    });
+
+    it("rejects Promise when response.error is set", () => {
+      const response = { error: "NG" };
+      chrome.tabs.query.yields([{ id: 123 }]);
+      chrome.tabs.sendMessage.yields(response);
+
+      const sender = new MessageTabSender(["FOO"]);
+      return assert.rejected(sender.sendFooToActiveTab(), rejected => {
+        assert(rejected === "NG");
+      });
+    });
+  });
 });

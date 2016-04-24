@@ -1,7 +1,6 @@
 import _ from "lodash";
 import promisify from "./promisify";
 import normalizeMessageTypes from "./helpers/normalize-message-types";
-import defineSendMethods from "./helpers/define-send-methods";
 
 /**
  * Message sender using chrome.runtime.sendMessage
@@ -21,7 +20,15 @@ export default class MessageSender {
   constructor(messageTypes) {
     this._messageTypeMap = normalizeMessageTypes(messageTypes);
     this._messageTypes = Object.keys(this._messageTypeMap);
-    defineSendMethods(this, this._messageTypes, this._send);
+    this._defineSendMethods();
+  }
+
+  _defineSendMethods() {
+    this._messageTypes.forEach(type => {
+      this[_.camelCase(`send-${type}`)] = (message) => {
+        return this._send(type, message);
+      };
+    });
   }
 
   _send(type, message) {

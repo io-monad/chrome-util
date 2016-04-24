@@ -1,7 +1,6 @@
 import _ from "lodash";
 import promisify from "./promisify";
 import normalizeMessageTypes from "./helpers/normalize-message-types";
-import defineSendMethods from "./helpers/define-send-methods";
 
 /**
  * Message sender for sandbox iframe using postMessage.
@@ -26,13 +25,21 @@ export default class SandboxSender {
     this._iframe = iframe;
     this._messageTypeMap = normalizeMessageTypes(messageTypes);
     this._messageTypes = Object.keys(this._messageTypeMap);
-    defineSendMethods(this, this._messageTypes, this._send);
+    this._defineSendMethods();
 
     options = options || {};
     this._timeout = options.timeout || 30 * 1000;
     this._requestId = 0;
     this._responders = {};
     this._bindMessageEvent();
+  }
+
+  _defineSendMethods() {
+    this._messageTypes.forEach(type => {
+      this[_.camelCase(`send-${type}`)] = (message) => {
+        return this._send(type, message);
+      };
+    });
   }
 
   _bindMessageEvent() {
